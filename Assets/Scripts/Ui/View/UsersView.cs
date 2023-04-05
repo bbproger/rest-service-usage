@@ -3,6 +3,8 @@ using Cysharp.Threading.Tasks;
 using Data;
 using Services;
 using Ui.Components;
+using Ui.Popup;
+using Ui.Services;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -19,6 +21,7 @@ namespace Ui.View
         private CancellationTokenSource _cancellationTokenSource;
 
         private IUserService _userService;
+        private IPopupService _popupService;
 
         private DynamicContainer<UserItem, UserData> _usersDynamicContainer;
 
@@ -27,8 +30,9 @@ namespace Ui.View
         public UnityEvent<bool> OnPreparing { get; } = new();
 
         [Inject]
-        private void Inject(IUserService userService)
+        private void Inject(IUserService userService, IPopupService popupService)
         {
+            _popupService = popupService;
             _userService = userService;
         }
 
@@ -43,14 +47,19 @@ namespace Ui.View
         {
             OnPreparing?.Invoke(true);
             Result<UserData[]> result = await _userService.GetUsersAsync(_cancellationTokenSource.Token);
+            OnPreparing?.Invoke(false);
             if (!result.Success)
             {
-                Debug.LogError("Something went wrong");
+                AlertPopupResult alertPopupResult = await _popupService.ShowAlertPopup(new AlertInfo(
+                    "oops!",
+                    "Something went wrong while retrieving users data",
+                    AlertPopupButtonType.Ok
+                ));
+                Debug.Log($"Alert popup result: {alertPopupResult}");
                 return;
             }
 
             _usersDynamicContainer.Propagate(result.Value);
-            OnPreparing?.Invoke(false);
         }
 
         private void OnDestroy()

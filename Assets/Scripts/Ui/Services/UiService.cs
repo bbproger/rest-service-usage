@@ -1,7 +1,7 @@
 using Ui.View;
 using UnityEngine;
 
-namespace Ui
+namespace Ui.Services
 {
     public interface IUiService
     {

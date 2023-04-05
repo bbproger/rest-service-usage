@@ -1,15 +1,8 @@
-using Data;
+using Services.Data;
 using UnityEngine;
 
 namespace Ui.Components
 {
-    public class PhotoItemInfo
-    {
-        public PhotoData PhotoData { get; set; }
-        public Texture2D MainTexture { get; set; }
-        public Texture2D ThumbnailTexture { get; set; }
-    }
-
     public class PhotoItem : AbstractItem<PhotoItemInfo>
     {
         [SerializeField] private Field idField;

@@ -1,3 +1,4 @@
+using Ui.Di;
 using Ui.View;
 using UnityEngine;
 using Zenject;

@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
+using Ui.Popup;
 using Ui.View;
 using UnityEngine;
 
-namespace Ui
+namespace Ui.Services
 {
     public interface IPopupService
     {
         T ShowPopup<T>() where T : AbstractView;
         bool CloseFirstPopup<T>() where T : AbstractView;
         bool CloseLastPopup<T>() where T : AbstractView;
+        UniTask<AlertPopupResult> ShowAlertPopup(AlertInfo info);
     }
 
     public class PopupService : IPopupService
@@ -29,6 +32,19 @@ namespace Ui
             T view = _viewFactory.CreatePopup<T>();
             _activeViews.Add(view);
             return view;
+        }
+
+        public async UniTask<AlertPopupResult> ShowAlertPopup(AlertInfo info)
+        {
+            AlertPopup popup = ShowPopup<AlertPopup>();
+            popup.SetData(info);
+            AlertPopupResult result = await popup.Result;
+            if (result is AlertPopupResult.Ok or AlertPopupResult.Cancel)
+            {
+                CloseLastPopup<AlertPopup>();
+            }
+
+            return result;
         }
 
         public bool CloseFirstPopup<T>() where T : AbstractView

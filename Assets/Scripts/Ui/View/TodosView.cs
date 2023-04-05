@@ -3,6 +3,8 @@ using Cysharp.Threading.Tasks;
 using Data;
 using Services;
 using Ui.Components;
+using Ui.Popup;
+using Ui.Services;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -19,6 +21,7 @@ namespace Ui.View
         private CancellationTokenSource _cancellationTokenSource;
 
         private ITodoService _todoService;
+        private IPopupService _popupService;
 
         private DynamicContainer<TodoItem, TodoData> _todosDynamicContainer;
 
@@ -27,8 +30,9 @@ namespace Ui.View
         public UnityEvent<bool> OnPreparing { get; } = new();
 
         [Inject]
-        private void Inject(ITodoService todoService)
+        private void Inject(ITodoService todoService, IPopupService popupService)
         {
+            _popupService = popupService;
             _todoService = todoService;
         }
 
@@ -43,14 +47,19 @@ namespace Ui.View
         {
             OnPreparing?.Invoke(true);
             Result<TodoData[]> result = await _todoService.GetTodosAsync(_cancellationTokenSource.Token);
+            OnPreparing?.Invoke(false);
             if (!result.Success)
             {
-                Debug.LogError("Something went wrong");
+                AlertPopupResult alertPopupResult = await _popupService.ShowAlertPopup(new AlertInfo(
+                    "oops!",
+                    "Something went wrong while retrieving todos data",
+                    AlertPopupButtonType.Ok
+                ));
+                Debug.Log($"Alert popup result: {alertPopupResult}");
                 return;
             }
 
             _todosDynamicContainer.Propagate(result.Value);
-            OnPreparing?.Invoke(false);
         }
 
         private void OnDestroy()

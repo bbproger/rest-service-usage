@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Data;
 using Network;
+using Services.Data;
 using Ui;
-using Ui.Components;
 using UnityEngine;
 
 namespace Services
@@ -41,7 +39,8 @@ namespace Services
             }
         }
 
-        private async UniTask<PhotoItemInfo[]> CollectAsync(PhotoData[] data, CancellationToken cancellationToken = default)
+        private async UniTask<PhotoItemInfo[]> CollectAsync(PhotoData[] data,
+            CancellationToken cancellationToken = default)
         {
             List<PhotoItemInfo> photoItemInfos = new();
             foreach (PhotoData photoData in data)

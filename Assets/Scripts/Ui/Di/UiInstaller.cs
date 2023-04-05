@@ -1,9 +1,10 @@
 using Ui.Popup;
+using Ui.Services;
 using Ui.View;
 using UnityEngine;
 using Zenject;
 
-namespace Ui
+namespace Ui.Di
 {
     public static class DiExtension
     {
@@ -32,6 +33,7 @@ namespace Ui
             Container.Bind<ViewFactory>().AsSingle().Lazy();
 
             Container.BindView<LoadingPopup>(popupsLocation);
+            Container.BindView<AlertPopup>(popupsLocation);
 
             Container.BindView<MainView>(viewsLocation);
             Container.BindView<UsersView>(viewsLocation);
