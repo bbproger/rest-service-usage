@@ -26,7 +26,7 @@ namespace Services
         {
             try
             {
-                UserData[] result = await _restClient.GetAsync<UserData[]>("usersss", cancellationToken);
+                UserData[] result = await _restClient.GetAsync<UserData[]>("users", cancellationToken);
                 return Result<UserData[]>.Ok(result);
             }
             catch (Exception e)
